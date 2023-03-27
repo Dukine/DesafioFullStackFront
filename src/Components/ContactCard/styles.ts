@@ -4,7 +4,7 @@ const StyledContactCard = styled.li`
   max-width: 100%;
   background-color: var(--grey-1);
   border-radius: 4px;
-  padding: 1rem;
+  /* padding: 1rem; */
   display: flex;
   color: var(--grey-0);
 
@@ -13,6 +13,7 @@ const StyledContactCard = styled.li`
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+    padding: 1rem;
 
     > h4 {
       display: flex;
@@ -21,6 +22,22 @@ const StyledContactCard = styled.li`
 
     > span {
       margin-left: 1rem;
+    }
+  }
+  .contact-buttons {
+    min-height: 100%;
+    display: flex;
+
+    > button {
+      background-color: var(--grey-2);
+      border-color: var(--grey-1);
+      border-radius: 4px;
+      height: 100%;
+
+      &:hover {
+        background-color: var(--grey-1);
+        border-color: var(--grey-2);
+      }
     }
   }
 

@@ -26,6 +26,7 @@ export interface iAddContactInfo {
 interface iContactContext {
   contacts: iContact[];
   addContact(info: iAddContactInfo): Promise<void>;
+  cfgContact(info: iAddContactInfo): Promise<void>;
   deleteContact(): Promise<void>;
   contactsConfig: iContactConfig;
   setContactsConfig(contactConfig: iContactConfig): void;
@@ -43,41 +44,84 @@ const ContactProvider = ({ children }: iProviderProps) => {
   });
   const { user } = useContext(UserContext);
 
-  const addContact = async (info: iAddContactInfo) => {
+  const getContact = async () => {
     const token = localStorage.getItem("@TOKEN");
+
     try {
-      const { data } = await Api.post<iContact>("contact/", info, {
+      const { data } = await Api.get<iContact[]>("contact/", {
         headers: { Authorization: `Bearer ${token}` },
       });
-      toast.success(`Novo contato adicionado!`);
-      setContacts([...contacts, data]);
+      setContacts([...data]);
     } catch (err) {
       axios.isAxiosError(err)
         ? toast.error(`${err.response?.data.detail}`)
         : console.error(err);
     }
+  };
+
+  const addContact = async (info: iAddContactInfo) => {
+    const token = localStorage.getItem("@TOKEN");
+
+    try {
+      await Api.post<iContact>("contact/", info, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      toast.success(`Novo contato adicionado!`);
+      getContact();
+    } catch (err) {
+      axios.isAxiosError(err)
+        ? toast.error(`${err.response?.data.detail}`)
+        : console.error(err);
+    }
+
+    setContactsConfig({ ...contactsConfig, option: null });
+  };
+
+  const cfgContact = async (info: iAddContactInfo) => {
+    const token = localStorage.getItem("@TOKEN");
+
+    let x: keyof iAddContactInfo;
+    for (x in info) {
+      if (!info[x]) {
+        delete info[x];
+      }
+    }
+
+    try {
+      await Api.patch<iContact>(
+        `contact/${contactsConfig.contactTarget.id}/`,
+        info,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      toast.success(`Contato atualizado!`);
+      getContact();
+    } catch (err) {
+      axios.isAxiosError(err)
+        ? toast.error(`${err.response?.data.detail}`)
+        : console.error(err);
+    }
+
     setContactsConfig({ ...contactsConfig, option: null });
   };
 
   const deleteContact = async () => {
     const token = localStorage.getItem("@TOKEN");
+
     try {
-      console.log(contactsConfig.contactTarget.id);
-      await Api.delete(`contact/${contactsConfig.contactTarget.id}`, {
+      await Api.delete(`contact/${contactsConfig.contactTarget.id}/`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       toast.success(`Contato deletado!`);
-      setContacts(
-        contacts.filter(
-          (contact) => contact.id !== contactsConfig.contactTarget.id
-        )
-      );
+      getContact();
     } catch (err) {
       axios.isAxiosError(err)
         ? toast.error(`${err.response?.data.detail}`)
         : console.error(err);
       console.log(err);
     }
+
     setContactsConfig({ ...contactsConfig, option: null });
   };
 
@@ -91,6 +135,7 @@ const ContactProvider = ({ children }: iProviderProps) => {
       value={{
         contacts,
         addContact,
+        cfgContact,
         deleteContact,
         contactsConfig,
         setContactsConfig,
