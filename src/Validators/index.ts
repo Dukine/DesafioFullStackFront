@@ -21,7 +21,7 @@ export const RegisterSchema = yup.object({
     .string()
     .email(`Insira um email válido`)
     .required(`Email obrigatório`),
-  phone: yup.string().required(`Telefone obrigatório`).max(10),
+  phone: yup.string().required(`Telefone obrigatório`).max(11),
 });
 
 export const AddContactSchema = yup.object({
@@ -31,5 +31,12 @@ export const AddContactSchema = yup.object({
     .string()
     .email(`Insira um email válido`)
     .required(`Email obrigatório`),
-  phone: yup.string().required(`Telefone obrigatório`).max(10),
+  phone: yup.string().required(`Telefone obrigatório`).max(11),
+});
+
+export const CfgContactSchema = yup.object({
+  first_name: yup.string().max(127),
+  last_name: yup.string().max(127),
+  email: yup.string().email(`Insira um email válido`),
+  phone: yup.string().max(11),
 });

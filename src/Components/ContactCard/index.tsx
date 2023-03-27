@@ -1,8 +1,9 @@
 import StyledContactCard from "./styles";
 import { ContactContext } from "../../Context/ContactContext";
 import { iContact } from "../../Context/UserContext";
+import Button from "../Button";
 
-import { FaTrashAlt } from "react-icons/fa";
+import { FaTrashAlt, FaCog } from "react-icons/fa";
 import { useContext } from "react";
 
 interface iContactCardProps {
@@ -16,6 +17,10 @@ const ContactCard = ({ contact }: iContactCardProps) => {
     setContactsConfig({ option: `Rmv`, contactTarget: contact });
   };
 
+  const patchContact = (contact: iContact) => {
+    setContactsConfig({ option: `Cfg`, contactTarget: contact });
+  };
+
   return (
     <StyledContactCard>
       <div className="contact-info">
@@ -24,7 +29,14 @@ const ContactCard = ({ contact }: iContactCardProps) => {
         <span>Telefone: {contact.phone}</span>
         <span>Adicionado em: {contact.registered_at}</span>
       </div>
-      <FaTrashAlt onClick={() => removeContact(contact)} />
+      <div className="contact-buttons">
+        <Button variant medium onClick={() => removeContact(contact)}>
+          <FaTrashAlt />
+        </Button>
+        <Button variant medium onClick={() => patchContact(contact)}>
+          <FaCog />
+        </Button>
+      </div>
     </StyledContactCard>
   );
 };

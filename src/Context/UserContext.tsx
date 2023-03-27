@@ -45,12 +45,19 @@ export interface iContact {
   registered_at: string;
 }
 
+interface iUserConfig {
+  option: string | null;
+  userTarget: iUser;
+}
+
 interface iUserContext {
   user: iUser | undefined;
   setUser(user: iUser | undefined): void;
   loginUser(info: iLoginUserInfo): Promise<void>;
   registerUser(info: iRegisterUserInfo): Promise<void>;
   loading: boolean;
+  userConfig: iUserConfig;
+  setUserConfig(userConfig: iUserConfig): void;
 }
 
 export const UserContext = createContext<iUserContext>({} as iUserContext);
@@ -58,6 +65,10 @@ export const UserContext = createContext<iUserContext>({} as iUserContext);
 const UserProvider = ({ children }: iProviderProps) => {
   const [user, setUser] = useState<iUser>();
   const [loading, setLoading] = useState<boolean>(true);
+  const [userConfig, setUserConfig] = useState<iUserConfig>({
+    option: null,
+    userTarget: {} as iUser,
+  });
   const navigate = useNavigate();
 
   const loginUser = async (info: iLoginUserInfo) => {
@@ -111,7 +122,15 @@ const UserProvider = ({ children }: iProviderProps) => {
 
   return (
     <UserContext.Provider
-      value={{ user, setUser, loginUser, registerUser, loading }}
+      value={{
+        user,
+        setUser,
+        loginUser,
+        registerUser,
+        loading,
+        userConfig,
+        setUserConfig,
+      }}
     >
       {children}
     </UserContext.Provider>
